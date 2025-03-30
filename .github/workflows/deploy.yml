@@ -1,7 +1,10 @@
 name: Deploy to Remote Server
 
 on:
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch:
+  push:
+    branches:
+      - master
 
 jobs:
   deploy:
