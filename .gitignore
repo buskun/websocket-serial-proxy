@@ -1,0 +1,6 @@
+dist
+node_modules
+
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/self

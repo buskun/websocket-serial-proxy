@@ -1,0 +1,31 @@
+{
+  "name": "websocket-serial-bridge",
+  "version": "1.0.0",
+  "description": "A Node.js server that connects WebSocket to a Serial Port",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "node dist/server.js",
+    "build": "tsc --build",
+    "dev": "ts-node-dev src/server.ts",
+    "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\"",
+    "lint": "eslint --fix --ignore-pattern \"utils/*\" ."
+  },
+  "dependencies": {
+    "@serialport/bindings-interface": "^1.2.2",
+    "serialport": "^11.0.0",
+    "ws": "^8.15.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.23.0",
+    "@types/node": "^20.4.0",
+    "@types/ws": "^8.5.7",
+    "eslint": "^9.23.0",
+    "eslint-config-prettier": "^10.1.1",
+    "globals": "^16.0.0",
+    "prettier": "3.5.3",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^8.28.0"
+  }
+}
