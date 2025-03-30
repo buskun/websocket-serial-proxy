@@ -4,33 +4,23 @@ on:
   workflow_dispatch:  # Manual trigger
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login ${{ vars.HARBOR_HOST }} -u "${{ vars.DOCKERHUB_USERNAME }}" --password-stdin
-
-      - name: Build and Push Docker Image
-        run: |
-          docker build -t ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT }}/websocket-serial-proxy:latest .
-          docker push ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT }}/websocket-serial-proxy:latest
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Remote Server via SSH
         uses: appleboy/ssh-action@v0.1.10
+        env:
+          REPO: ${{ github.repository }}
         with:
+          envs: REPO
           host: ${{ vars.SSH_HOST }}
           port: ${{ vars.SSH_PORT }}
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            docker pull ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT }}/websocket-serial-proxy:latest
-            docker stop websocket-proxy || true
-            docker rm websocket-proxy || true
-            docker run -d --name websocket-proxy -it --privileged -p 8080:8080 ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT }}/websocket-serial-proxy:latest
+            cd /home/github/$REPO
+            forever stop $(forever list | grep "dist/server.js" | grep -v "STOPPED" | grep -oE '[0-9]+[ ]+[0-9]+' | grep -oEi ' [0-9]+' | grep -oE '[0-9]+')
+            git pull
+            pnpm install
+            pnpm build
+            forever start dist/server.js
