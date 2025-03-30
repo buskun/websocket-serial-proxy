@@ -30,4 +30,5 @@ jobs:
             pnpm install
             pnpm build
             npx -y kill-port $WS_PORT
+            while [ $(sudo netstat -peanut | grep -c ":8080 ") -ne 0 ]; do sleep 2; done;
             export WS_PORT=$WS_PORT && forever start -c 'sudo -E node' dist/server.js
