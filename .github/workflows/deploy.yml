@@ -25,10 +25,7 @@ jobs:
             export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             cd /home/github/$REPO
-            forever stop $(forever list | grep "dist/server.js" | grep -v "STOPPED" | grep -oE '[0-9]+[ ]+[0-9]+' | grep -oEi ' [0-9]+' | grep -oE '[0-9]+')
-            sudo kill -9 $(sudo netstat -peanut | grep ":8080 " | grep -oE '[0-9]+\/node' | grep -oE '[0-9]+')
             git pull
             pnpm install
             pnpm build
-            while [ $(sudo netstat -peanut | grep -c ":8080 ") -ne 0 ]; do echo "Waiting for port to free" && sleep 2; done;
-            export WS_PORT=$WS_PORT && forever start -c 'sudo -E node' dist/server.js
+            pm2 restart websocket-proxy
