@@ -33,4 +33,4 @@ jobs:
             docker pull ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT }}/websocket-serial-proxy:latest
             docker stop websocket-proxy || true
             docker rm websocket-proxy || true
-            docker run -d --name websocket-proxy -p 8080:8080 ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT }}/websocket-serial-proxy:latest
+            docker run -d --name websocket-proxy -it --privileged -p 8080:8080 ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT }}/websocket-serial-proxy:latest
