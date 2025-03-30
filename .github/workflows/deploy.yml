@@ -15,8 +15,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ vars.HARBOR_HOST }}/${{ vars.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest .
-          docker push ${{ vars.HARBOR_HOST }}/${{ vars.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest
+          docker build -t ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT }}/websocket-serial-proxy:latest .
+          docker push ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT }}/websocket-serial-proxy:latest
 
   deploy:
     needs: build
@@ -30,7 +30,7 @@ jobs:
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            docker pull ${{ vars.HARBOR_HOST }}/${{ vars.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest
+            docker pull ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT }}/websocket-serial-proxy:latest
             docker stop websocket-proxy || true
             docker rm websocket-proxy || true
-            docker run -d --name websocket-proxy -p 8080:8080 ${{ vars.HARBOR_HOST }}/${{ vars.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest
+            docker run -d --name websocket-proxy -p 8080:8080 ${{ vars.HARBOR_HOST }}/${{ vars.HARBOR_PROJECT }}/websocket-serial-proxy:latest
