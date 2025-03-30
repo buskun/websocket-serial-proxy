@@ -14,8 +14,9 @@ jobs:
         uses: appleboy/ssh-action@v0.1.10
         env:
           REPO: ${{ github.event.repository.name }}
+          WS_PORT: 8080
         with:
-          envs: REPO
+          envs: REPO,WS_PORT
           host: ${{ vars.SSH_HOST }}
           port: ${{ vars.SSH_PORT }}
           username: ${{ vars.SSH_USER }}
@@ -28,4 +29,5 @@ jobs:
             git pull
             pnpm install
             pnpm build
-            export WS_PORT=8080 && forever start -c 'sudo -E node' dist/server.js
+            npx -y kill-port $WS_PORT
+            export WS_PORT=$WS_PORT && forever start -c 'sudo -E node' dist/server.js
