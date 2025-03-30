@@ -64,9 +64,13 @@ async function initiateSerialPortConnection(ws: WebSocket): Promise<{
           console.log(`Serial port ${portName} opened at ${BAUD_RATE} baud.`)
           connectionMap[portName] = serialPort
 
+          const device = serialPortList.find(port => port.path === portName)
+
           resolve({
             serialPort,
-            deviceName: serialPortList.find(port => port.path === portName)?.friendlyName ?? 'unknown',
+            deviceName: device
+              ? (device.friendlyName ?? device.serialNumber ?? device.pnpId ?? device.path)
+              : 'unknown',
             unbind: () => ws.off('message', handleConnection),
           })
         })

@@ -23,4 +23,4 @@ jobs:
             git pull
             pnpm install
             pnpm build
-            forever start dist/server.js
+            export WS_PORT=8080 && forever start -c 'sudo -E node' dist/server.js
