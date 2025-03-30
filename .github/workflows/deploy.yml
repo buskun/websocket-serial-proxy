@@ -13,7 +13,7 @@ jobs:
       - name: Deploy to Remote Server via SSH
         uses: appleboy/ssh-action@v0.1.10
         env:
-          REPO: ${{ github.repository }}
+          REPO: ${{ github.event.repository.name }}
         with:
           envs: REPO
           host: ${{ vars.SSH_HOST }}
