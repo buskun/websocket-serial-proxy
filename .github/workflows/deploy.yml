@@ -28,4 +28,4 @@ jobs:
             git pull
             pnpm install
             pnpm build
-            pm2 restart websocket-proxy
+            WS_PORT=$WS_PORT pm2 restart websocket-proxy --update-env
