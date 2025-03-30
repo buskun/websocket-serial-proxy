@@ -1,0 +1,36 @@
+name: Deploy to Remote Server
+
+on:
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Remote Server via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest
+            docker stop websocket-proxy || true
+            docker rm websocket-proxy || true
+            docker run -d --name websocket-proxy -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest
