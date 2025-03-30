@@ -26,7 +26,7 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             cd /home/github/$REPO
             forever stop $(forever list | grep "dist/server.js" | grep -v "STOPPED" | grep -oE '[0-9]+[ ]+[0-9]+' | grep -oEi ' [0-9]+' | grep -oE '[0-9]+')
-            sudo kill -9 $(sudo netstat -peanut | grep ":8080 " | grep -oE '[0-9]+\/node$' | grep -oE '[0-9]+')
+            sudo kill -9 $(sudo netstat -peanut | grep ":8080 " | grep -oE '[0-9]+\/node' | grep -oE '[0-9]+')
             git pull
             pnpm install
             pnpm build
