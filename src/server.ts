@@ -39,13 +39,19 @@ async function initiateSerialPortConnection(ws: WebSocket): Promise<{
   const serialPortList = (await SerialPort.list()) as (import('@serialport/bindings-interface').PortInfo & {
     friendlyName?: string
   })[]
+
+  console.log(`Fetched serial port: ${serialPortList.map(port => JSON.stringify(port)).join(', ')}`)
   const validPortList = serialPortList.filter(port => port.vendorId === '3513')
+  console.log(`Valid serial port: ${validPortList.map(port => `(${port.path}) ${port.friendlyName}`)}`)
 
   return new Promise((resolve, reject) => {
     ws.send(`port_list: ${JSON.stringify(validPortList)}`)
 
     const handleConnection = async (message: RawData) => {
       const connectionString = message.toString()
+
+      console.log(`Rcv message while initialing connection: ${message}`)
+
       if (connectionString.startsWith('connect: ')) {
         const portName = connectionString.substring(9)
 
