@@ -11,12 +11,12 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login ${{ secrets.HARBOUR_HOST }} -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login ${{ secrets.HARBOR_HOST }} -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ secrets.HARBOUR_HOST }}/${{ secrets.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest .
-          docker push ${{ secrets.HARBOUR_HOST }}/${{ secrets.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest
+          docker build -t ${{ secrets.HARBOR_HOST }}/${{ secrets.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest .
+          docker push ${{ secrets.HARBOR_HOST }}/${{ secrets.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest
 
   deploy:
     needs: build
@@ -30,7 +30,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            docker pull ${{ secrets.HARBOUR_HOST }}/${{ secrets.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest
+            docker pull ${{ secrets.HARBOR_HOST }}/${{ secrets.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest
             docker stop websocket-proxy || true
             docker rm websocket-proxy || true
-            docker run -d --name websocket-proxy -p 8080:8080 ${{ secrets.HARBOUR_HOST }}/${{ secrets.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest
+            docker run -d --name websocket-proxy -p 8080:8080 ${{ secrets.HARBOR_HOST }}/${{ secrets.DOCKERHUB_USERNAME }}/websocket-serial-proxy:latest
